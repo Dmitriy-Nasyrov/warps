@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скачивание конфигурации</title>
+</head>
+<body>
+    <h1>Скачивание конфигурации WARP</h1>
+    <script>
+        // Получаем параметры из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const content = urlParams.get('content');
+        const filename = urlParams.get('filename') || 'WARP.conf';
+
+        // Если есть контент, создаем ссылку для скачивания
+        if (content) {
+            const decodedContent = atob(content);  // Декодируем Base64
+            const blob = new Blob([decodedContent], { type: 'application/octet-stream' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();  // Имитируем клик по ссылке для скачивания
+        } else {
+            alert("Ошибка: не передан контент для скачивания.");
+        }
+    </script>
+</body>
+</html>
