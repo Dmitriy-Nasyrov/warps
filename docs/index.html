@@ -1,17 +1,96 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Скачивание конфигурации</title>
+    <title>Скачивание конфигурации WARP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .download-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .download-btn:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: #ff0000;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .loader {
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Скачивание конфигурации WARP</h1>
+
+    <div class="container">
+        <h1>Скачивание конфигурации WARP</h1>
+        <p>Конфигурация WARP будет скачана автоматически. Если этого не произошло, нажмите на кнопку ниже.</p>
+        
+        <button class="download-btn" id="downloadBtn" style="display:none">Скачать вручную</button>
+        
+        <p id="errorMessage" class="error" style="display:none">Ошибка: не передан контент для скачивания.</p>
+
+        <div class="loader" id="loader">
+            <img src="https://i.gifer.com/YCZH.gif" alt="Загрузка...">
+        </div>
+    </div>
+
     <script>
         // Получаем параметры из URL
         const urlParams = new URLSearchParams(window.location.search);
         const content = urlParams.get('content');
         const filename = urlParams.get('filename') || 'WARP.conf';
+
+        const downloadBtn = document.getElementById('downloadBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const loader = document.getElementById('loader');
 
         // Если есть контент, создаем ссылку для скачивания
         if (content) {
@@ -21,9 +100,33 @@
             link.href = URL.createObjectURL(blob);
             link.download = filename;
             link.click();  // Имитируем клик по ссылке для скачивания
+
+            // Показываем кнопку для ручного скачивания, если нужно
+            setTimeout(() => {
+                loader.style.display = 'none';
+                downloadBtn.style.display = 'inline-block';
+            }, 1000);  // Показываем кнопку через 1 секунду
         } else {
-            alert("Ошибка: не передан контент для скачивания.");
+            errorMessage.style.display = 'block';
+            loader.style.display = 'none';
         }
+
+        // Функция для ручного скачивания
+        downloadBtn.addEventListener('click', () => {
+            if (content) {
+                const decodedContent = atob(content);  // Декодируем Base64
+                const blob = new Blob([decodedContent], { type: 'application/octet-stream' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();  // Имитируем клик по ссылке для скачивания
+            }
+        });
+
+        // Показываем анимацию загрузки, пока не завершится скачивание
+        loader.style.display = 'block';
     </script>
+
 </body>
+
 </html>
